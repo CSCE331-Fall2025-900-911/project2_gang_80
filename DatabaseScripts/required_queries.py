@@ -1,0 +1,1 @@
+# python script to generate 15 SQL queries that can be run as an input file to verify the low-level design and interactions
