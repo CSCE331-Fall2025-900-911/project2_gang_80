@@ -1,11 +1,12 @@
 import random
 import datetime
 
-# ----------------------------
-# Config
-# ----------------------------
+
+
+# name of sql query file
 OUTPUT_FILE = "seed_data.sql"
 
+# menu_items
 MENU_ITEMS = [
     "Classic Pearl Milk Tea", "Honey Pearl Milk Tea", "Coffee Creama", 
     "Thai Pearl Milk Tea", "Mango Green Milk Tea", "Taro Pearl Milk Tea",
@@ -20,6 +21,7 @@ MENU_ITEMS = [
     "Light Sweetness", "No Sugar"
 ]
 
+# inventory items
 INVENTORY_ITEMS = [
     "Black Tea Leaves", "Green Tea Leaves", "Sugar", "Milk", "Condensed Milk",
     "Coconut Milk", "Matcha Powder", "Taro Powder", "Chocolate Syrup", "Mango Syrup",
@@ -28,16 +30,16 @@ INVENTORY_ITEMS = [
     "Ice Cubes", "Cups", "Lids", "Straws", "Napkins"
 ]
 
+# CONSTANTS
 NUM_WEEKS = 52
 TOTAL_SALES_TARGET = 1_000_000  # ~ $1M target for team of 5
 PEAK_DAYS = 2
 NUM_ORDERS = 20000  # adjust until sales ~ 1M
 
 
-# ----------------------------
-# Helpers
-# ----------------------------
+# HELPER FUNCTIONS
 
+# generates random date for orders
 def random_date(start, end):
     """Generate random datetime between two datetimes."""
     delta = end - start
@@ -46,9 +48,8 @@ def random_date(start, end):
     return start + datetime.timedelta(seconds=random_second)
 
 
-# ----------------------------
-# Generate Data
-# ----------------------------
+
+# data generation
 
 menu_item_records = []
 inventory_records = []
