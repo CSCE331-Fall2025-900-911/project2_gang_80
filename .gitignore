@@ -1,2 +1,5 @@
 # ignore sql file
 *.sql
+
+# ignore text file
+available_queries.txt
