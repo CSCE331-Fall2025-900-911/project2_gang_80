@@ -1,14 +1,15 @@
 import random
 import datetime
+import csv
 
+# ----------------------------
+# CONFIG
+# ----------------------------
+NUM_WEEKS = 52
+NUM_ORDERS = 20000
+OUTPUT_DIR = "./"  # folder where CSVs will be saved
 
-
-# name of sql query file
-OUTPUT_FILE = "seed_data.sql"
-
-# menu_items
-# (name, price, description)
-MENU_ITEMS = [ #Price between 3.5 and 7.0, in intervals of 0.25
+MENU_ITEMS = [ # (name, price, description)
     ("Classic Pearl Milk Tea", 3.5, "yummy Classic Pearl Milk Tea!"),
     ("Honey Pearl Milk Tea", 4.75, "yummy Honey Pearl Milk Tea!"),
     ("Coffee Creama", 4.5, "yummy Coffee Creama!"),
@@ -50,7 +51,6 @@ ADDON_ITEMS = [
     ("No Sugar" , 0.0, "no sugar in any drink"),
 ]
 
-# inventory items
 INVENTORY_ITEMS = [
     "Black Tea Leaves", "Green Tea Leaves", "Sugar", "Milk", "Condensed Milk",
     "Coconut Milk", "Matcha Powder", "Taro Powder", "Chocolate Syrup", "Mango Syrup",
@@ -59,16 +59,10 @@ INVENTORY_ITEMS = [
     "Ice Cubes", "Cups", "Lids", "Straws", "Napkins"
 ]
 
-# CONSTANTS
-NUM_WEEKS = 52
-TOTAL_SALES_TARGET = 1_000_000  # ~ $1M target for team of 5
-PEAK_DAYS = 2
-NUM_ORDERS = 20000  # adjust until sales ~ 1M
+# ----------------------------
+# HELPERS
+# ----------------------------
 
-
-# HELPER FUNCTIONS
-
-# generates random date for orders
 def random_date(start, end):
     """Generate random datetime between two datetimes."""
     delta = end - start
@@ -76,110 +70,77 @@ def random_date(start, end):
     random_second = random.randrange(int_delta)
     return start + datetime.timedelta(seconds=random_second)
 
+# ----------------------------
+# DATA GENERATION
+# ----------------------------
 
+menu_items = []
+inventory = []
+orders = []
+joint_order_items = []
+joint_recipe_ingredients = []
 
-# data generation
-NUM_CUSTOMERS = 2000
-customer_records = []
-NUM_EMPLOYEES = 15
-NUM_MANAGERS = 3
-employees_records = []
-menu_item_records = []
-inventory_records = []
-NUM_ORDERS = 20000
-order_records = []
-joint_order_item_records = []
-joint_recipe_ingredient_records = []
-
-# IDs start from 1
 menu_item_id_map = {}
 inventory_item_id_map = {}
 
-# --- Insert Employees ---
-for i in range(1, NUM_EMPLOYEES + 1):
-    name = f"Employee{i}"
-    is_manager = (i<=NUM_MANAGERS)
-    employees_records.append(f"INSERT INTO employees (id, name, email, is_manager) VALUES ({i}, '{name}', {name}@teaone.com, {is_manager});")
-
-# --- Insert Customers ---
-for i in range(1, NUM_CUSTOMERS + 1):
-    name = f"Customer{i}"
-    phone_number = random.randint(1000000000, 9999999999)
-    employees_records.append(f"INSERT INTO employees (id, name, phone_number, pearls) VALUES ({i}, '{name}', {phone_number}, {is_manager});")
-
-# --- Insert Menu Items ---
+# --- Menu Items ---
 for i, (name, price, desc) in enumerate(MENU_ITEMS, start=1):
-    menu_item_records.append(f"INSERT INTO menu_items (id, name, price, is_mod, description) VALUES ({i}, '{name}', {price}, {False}, '{desc}');")
-    menu_item_id_map[name] = i
-for i, (name, price, desc) in enumerate(ADDON_ITEMS, start=len(MENU_ITEMS)+1):
-    menu_item_records.append(f"INSERT INTO menu_items (id, name, price, is_mod, description) VALUES ({i}, '{name}', {price}, {True}, '{desc}');")
+    menu_items.append([i, name, price, False, desc])
     menu_item_id_map[name] = i
 
-# --- Insert Inventory Items ---
+for i, (name, price, desc) in enumerate(ADDON_ITEMS, start=len(MENU_ITEMS)+1):
+    menu_items.append([i, name, price, True, desc])
+    menu_item_id_map[name] = i
+
+# --- Inventory ---
 for j, name in enumerate(INVENTORY_ITEMS, 1):
     quantity = random.randint(500, 2000)
     restock_price = round(random.uniform(5, 50), 2)
-    inventory_records.append(f"INSERT INTO inventory (id, name, quantity, restock_price) VALUES ({j}, '{name}', {quantity}, {restock_price});")
+    inventory.append([j, name, quantity, restock_price])
     inventory_item_id_map[name] = j
 
-# --- Define Recipes (menu_items -> inventory items) ---
-for (name, _, _) in MENU_ITEMS:  # main drinks only
+# --- Recipes ---
+for (name, _, _) in MENU_ITEMS:  # only base drinks
     menu_id = menu_item_id_map[name]
     needed_ingredients = random.sample(INVENTORY_ITEMS, random.randint(2, 5))
     for ingr in needed_ingredients:
         qty_used = random.randint(1, 3)
         ingr_id = inventory_item_id_map[ingr]
-        joint_recipe_ingredient_records.append(
-            f"INSERT INTO joint_recipe_ingredients (menu_item_id, inventory_item_id, quantity_used) VALUES ({menu_id}, {ingr_id}, {qty_used});"
-        )
+        joint_recipe_ingredients.append([menu_id, ingr_id, qty_used])
 
-# --- Insert Orders ---
+# --- Orders ---
 start_date = datetime.datetime.now() - datetime.timedelta(weeks=NUM_WEEKS)
 end_date = datetime.datetime.now()
 
 for order_id in range(1, NUM_ORDERS + 1):
-    customer_id = random.randint(1, NUM_CUSTOMERS+1)
-    employee_id = random.randint(1, NUM_EMPLOYEES+1)
+    customer_id = random.randint(1, 2000)
+    employee_id = random.randint(1, 50)
     complete_time = random_date(start_date, end_date).strftime('%Y-%m-%d %H:%M:%S')
-    
-    # pick 1-3 items per order
+
     items = random.sample(MENU_ITEMS, random.randint(1, 3))
     order_total = sum([price for (_, price, _) in items])
     pearls_earned = int(order_total // 2)
-    
-    order_records.append(
-        f"INSERT INTO orders (id, customer_id, complete_time, order_total_price, pearls_earned, employee_id) "
-        f"VALUES ({order_id}, {customer_id}, '{complete_time}', {order_total:.2f}, {pearls_earned}, {employee_id});"
-    )
-    
-    # link order -> items
+
+    orders.append([order_id, customer_id, complete_time, round(order_total, 2), pearls_earned, employee_id])
+
     for (item, _, _) in items:
         item_id = menu_item_id_map[item]
-        joint_order_item_records.append(
-            f"INSERT INTO joint_order_item (order_id, menu_item_id) VALUES ({order_id}, {item_id});"
-        )
+        joint_order_items.append([order_id, item_id])
 
 # ----------------------------
-# Write to .sql file
+# WRITE TO CSV FILES
 # ----------------------------
-with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-    f.write("-- EMPLOYEES\n")
-    f.write("\n".join(employees_records) + "\n\n")
-    f.write("-- CUSTOMERS\n")
-    f.write("\n".join(customer_records) + "\n\n")
-    f.write("-- MENU ITEMS\n")
-    f.write("\n".join(menu_item_records) + "\n\n")
-    print('PASSED MENU ITEMS')
-    f.write("-- INVENTORY\n")
-    f.write("\n".join(inventory_records) + "\n\n")
-    
-    f.write("-- RECIPES\n")
-    f.write("\n".join(joint_recipe_ingredient_records) + "\n\n")
-    
-    f.write("-- ORDERS\n")
-    f.write("\n".join(order_records) + "\n\n")
-    
-    f.write("-- ORDER -> ITEMS\n")
-    f.write("\n".join(joint_order_item_records) + "\n\n")
 
-print(f"✅ Done! SQL data written to {OUTPUT_FILE}")
+def write_csv(filename, header, rows):
+    with open(OUTPUT_DIR + filename, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(header)
+        writer.writerows(rows)
+
+write_csv("menu_items.csv", ["id", "name", "price", "is_mod", "description"], menu_items)
+write_csv("inventory.csv", ["id", "name", "quantity", "restock_price"], inventory)
+write_csv("orders.csv", ["id", "customer_id", "complete_time", "order_total_price", "pearls_earned", "employee_id"], orders)
+write_csv("joint_order_item.csv", ["order_id", "menu_item_id"], joint_order_items)
+write_csv("joint_recipe_ingredients.csv", ["menu_item_id", "inventory_item_id", "quantity_used"], joint_recipe_ingredients)
+
+print("✅ Done! CSV files written.")
