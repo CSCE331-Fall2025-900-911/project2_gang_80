@@ -1,0 +1,37 @@
+id,name,price,is_mod,description
+1,Classic Pearl Milk Tea,3.5,False,yummy Classic Pearl Milk Tea!
+2,Honey Pearl Milk Tea,4.75,False,yummy Honey Pearl Milk Tea!
+3,Coffee Creama,4.5,False,yummy Coffee Creama!
+4,Thai Pearl Milk Tea,4.25,False,yummy Thai Pearl Milk Tea!
+5,Mango Green Milk Tea,4.0,False,yummy Mango Green Milk Tea!
+6,Taro Pearl Milk Tea,4.0,False,yummy Taro Pearl Milk Tea!
+7,Hokkaido Pearl Milk Tea,6.5,False,yummy Hokkaido Pearl Milk Tea!
+8,Cocounut Pearl Milk Tea,3.75,False,yummy Cocounut Pearl Milk Tea!
+9,Mango Green Tea,3.5,False,yummy Mango Green Tea!
+10,Berry Lychee Burst,6.0,False,yummy Berry Lychee Burst!
+11,Honey Lemonade,3.5,False,yummy Honey Lemonade!
+12,Wintermelon Lemonade,3.75,False,yummy Wintermelon Lemonade!
+13,Halo Halo,5.5,False,yummy Halo Halo!
+14,Matcha Pearl Milk Tea,4.5,False,yummy Matcha Pearl Milk Tea!
+15,Strawberry Matcha Fresh Milk,4.25,False,yummy Strawberry Matcha Fresh Milk!
+16,Mango Matcha Fresh Milk,4.0,False,yummy Mango Matcha Fresh Milk!
+17,Oreo w/ Pearl,4.75,False,yummy Oreo w/ Pearl!
+18,Taro w/ Pudding,4.5,False,yummy Taro w/ Pudding!
+19,Lava Flow,6.0,False,yummy Lava Flow!
+20,Peach Tea w/ Lychee Jelly,3.5,False,yummy Peach Tea w/ Lychee Jelly!
+21,Boba,0.75,True,add boba to any drink
+22,Coffee Jelly,0.75,True,add coffee jelly to any drink
+23,Pudding,0.75,True,add pudding to any drink
+24,Lychee Jelly,0.75,True,add lychee jelly to any drink
+25,Honey Jelly,0.75,True,add honey jelly to any drink
+26,Crystal Boba,0.75,True,add crystal boba to any drink
+27,Mango Popping Boba,0.75,True,add mango popping boba to any drink
+28,Strawberry Popping Boba,0.75,True,add strawberry popping boba to any drink
+29,Ice Cream,0.75,True,add ice cream to any drink
+30,Crema,0.75,True,add crema to any drink
+31,Less Ice,0.0,True,less ice in any drink
+32,No Ice,0.0,True,no ice in any drink
+33,Less Sweetness,0.0,True,less sweetness in any drink
+34,Half Sweetness,0.0,True,half sweetness in any drink
+35,Light Sweetness,0.0,True,light sweetness in any drink
+36,No Sugar,0.0,True,no sugar in any drink
