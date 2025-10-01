@@ -130,12 +130,18 @@ for (name, _, _) in MENU_ITEMS:
 # Orders + Joint Order Items
 start_date = datetime.datetime.now() - datetime.timedelta(weeks=NUM_WEEKS)
 end_date = datetime.datetime.now()
+
+peaks = [random_date(start_date, end_date).date() for _ in range(PEAK_DAYS)]
 for order_id in range(1, NUM_ORDERS + 1):
     customer_id = random.randint(1, NUM_CUSTOMERS)
     employee_id = random.randint(1, NUM_EMPLOYEES)
-    complete_time = random_date(start_date, end_date).strftime('%Y-%m-%d %H:%M:%S')
+    complete_time = random_date(start_date, end_date)
+    complete_date = complete_time.date()
+    complete_time = complete_time.strftime('%Y-%m-%d %H:%M:%S')
     
     items = random.sample(MENU_ITEMS, random.randint(1, 3))
+    if complete_date in peaks:
+        items = random.sample(MENU_ITEMS, random.randint(3, 9))
     order_total = sum([price for (_, price, _) in items])
     pearls_earned = int(order_total // 2)
     
