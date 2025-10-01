@@ -5,3 +5,6 @@ seed_data.sql
 available_queries.txt
 
 DatabaseScripts/passwd.txt
+
+# ignore csv files
+*.csv
