@@ -3,13 +3,20 @@ import datetime
 import csv
 
 # ----------------------------
-# CONFIG
+# Config
 # ----------------------------
 NUM_WEEKS = 52
+TOTAL_SALES_TARGET = 1_000_000
+PEAK_DAYS = 2
 NUM_ORDERS = 20000
-OUTPUT_DIR = "./"  # folder where CSVs will be saved
+NUM_CUSTOMERS = 2000
+NUM_EMPLOYEES = 15
+NUM_MANAGERS = 3
 
-MENU_ITEMS = [ # (name, price, description)
+# ----------------------------
+# Static data
+# ----------------------------
+MENU_ITEMS = [
     ("Classic Pearl Milk Tea", 3.5, "yummy Classic Pearl Milk Tea!"),
     ("Honey Pearl Milk Tea", 4.75, "yummy Honey Pearl Milk Tea!"),
     ("Coffee Creama", 4.5, "yummy Coffee Creama!"),
@@ -24,7 +31,7 @@ MENU_ITEMS = [ # (name, price, description)
     ("Wintermelon Lemonade", 3.75, "yummy Wintermelon Lemonade!"),
     ("Halo Halo", 5.5, "yummy Halo Halo!"),
     ("Matcha Pearl Milk Tea", 4.5, "yummy Matcha Pearl Milk Tea!"),
-    ("Strawberry Matcha Fresh Milk",4.25, "yummy Strawberry Matcha Fresh Milk!"),
+    ("Strawberry Matcha Fresh Milk", 4.25, "yummy Strawberry Matcha Fresh Milk!"),
     ("Mango Matcha Fresh Milk", 4.0, "yummy Mango Matcha Fresh Milk!"),
     ("Oreo w/ Pearl", 4.75, "yummy Oreo w/ Pearl!"),
     ("Taro w/ Pudding", 4.5, "yummy Taro w/ Pudding!"),
@@ -42,13 +49,13 @@ ADDON_ITEMS = [
     ("Mango Popping Boba", 0.75, "add mango popping boba to any drink"),
     ("Strawberry Popping Boba", 0.75, "add strawberry popping boba to any drink"),
     ("Ice Cream", 0.75, "add ice cream to any drink"),
-    ("Crema" , 0.75, "add crema to any drink"),
+    ("Crema", 0.75, "add crema to any drink"),
     ("Less Ice", 0.0, "less ice in any drink"),
     ("No Ice", 0.0, "no ice in any drink"),
     ("Less Sweetness", 0.0, "less sweetness in any drink"),
     ("Half Sweetness", 0.0, "half sweetness in any drink"),
     ("Light Sweetness", 0.0, "light sweetness in any drink"),
-    ("No Sugar" , 0.0, "no sugar in any drink"),
+    ("No Sugar", 0.0, "no sugar in any drink"),
 ]
 
 INVENTORY_ITEMS = [
@@ -60,9 +67,8 @@ INVENTORY_ITEMS = [
 ]
 
 # ----------------------------
-# HELPERS
+# Helpers
 # ----------------------------
-
 def random_date(start, end):
     """Generate random datetime between two datetimes."""
     delta = end - start
@@ -71,9 +77,10 @@ def random_date(start, end):
     return start + datetime.timedelta(seconds=random_second)
 
 # ----------------------------
-# DATA GENERATION
+# Data generation
 # ----------------------------
-
+employees = []
+customers = []
 menu_items = []
 inventory = []
 orders = []
@@ -83,24 +90,36 @@ joint_recipe_ingredients = []
 menu_item_id_map = {}
 inventory_item_id_map = {}
 
-# --- Menu Items ---
-for i, (name, price, desc) in enumerate(MENU_ITEMS, start=1):
-    menu_items.append([i, name, price, False, desc])
-    menu_item_id_map[name] = i
+# Employees
+for i in range(1, NUM_EMPLOYEES + 1):
+    employees.append([i, f"Employee{i}", f"employee{i}@teaone.com", (i <= NUM_MANAGERS)])
 
-for i, (name, price, desc) in enumerate(ADDON_ITEMS, start=len(MENU_ITEMS)+1):
-    menu_items.append([i, name, price, True, desc])
-    menu_item_id_map[name] = i
+# Customers
+for i in range(1, NUM_CUSTOMERS + 1):
+    phone_number = random.randint(1000000000, 9999999999)
+    pearls = random.randint(0, 200)
+    customers.append([i, f"Customer{i}", phone_number, pearls])
 
-# --- Inventory ---
+# Menu Items
+id_counter = 1
+for (name, price, desc) in MENU_ITEMS:
+    menu_items.append([id_counter, name, price, False, desc])
+    menu_item_id_map[name] = id_counter
+    id_counter += 1
+for (name, price, desc) in ADDON_ITEMS:
+    menu_items.append([id_counter, name, price, True, desc])
+    menu_item_id_map[name] = id_counter
+    id_counter += 1
+
+# Inventory
 for j, name in enumerate(INVENTORY_ITEMS, 1):
     quantity = random.randint(500, 2000)
     restock_price = round(random.uniform(5, 50), 2)
     inventory.append([j, name, quantity, restock_price])
     inventory_item_id_map[name] = j
 
-# --- Recipes ---
-for (name, _, _) in MENU_ITEMS:  # only base drinks
+# Recipes
+for (name, _, _) in MENU_ITEMS:
     menu_id = menu_item_id_map[name]
     needed_ingredients = random.sample(INVENTORY_ITEMS, random.randint(2, 5))
     for ingr in needed_ingredients:
@@ -108,39 +127,38 @@ for (name, _, _) in MENU_ITEMS:  # only base drinks
         ingr_id = inventory_item_id_map[ingr]
         joint_recipe_ingredients.append([menu_id, ingr_id, qty_used])
 
-# --- Orders ---
+# Orders + Joint Order Items
 start_date = datetime.datetime.now() - datetime.timedelta(weeks=NUM_WEEKS)
 end_date = datetime.datetime.now()
-
 for order_id in range(1, NUM_ORDERS + 1):
-    customer_id = random.randint(1, 2000)
-    employee_id = random.randint(1, 50)
+    customer_id = random.randint(1, NUM_CUSTOMERS)
+    employee_id = random.randint(1, NUM_EMPLOYEES)
     complete_time = random_date(start_date, end_date).strftime('%Y-%m-%d %H:%M:%S')
-
+    
     items = random.sample(MENU_ITEMS, random.randint(1, 3))
     order_total = sum([price for (_, price, _) in items])
     pearls_earned = int(order_total // 2)
-
+    
     orders.append([order_id, customer_id, complete_time, round(order_total, 2), pearls_earned, employee_id])
-
+    
     for (item, _, _) in items:
-        item_id = menu_item_id_map[item]
-        joint_order_items.append([order_id, item_id])
+        joint_order_items.append([order_id, menu_item_id_map[item]])
 
 # ----------------------------
-# WRITE TO CSV FILES
+# Write CSV files
 # ----------------------------
-
 def write_csv(filename, header, rows):
-    with open(OUTPUT_DIR + filename, "w", newline="", encoding="utf-8") as f:
+    with open(filename, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(header)
         writer.writerows(rows)
 
+write_csv("employees.csv", ["id", "name", "email", "is_manager"], employees)
+write_csv("customers.csv", ["id", "name", "phone_number", "pearls"], customers)
 write_csv("menu_items.csv", ["id", "name", "price", "is_mod", "description"], menu_items)
 write_csv("inventory.csv", ["id", "name", "quantity", "restock_price"], inventory)
 write_csv("orders.csv", ["id", "customer_id", "complete_time", "order_total_price", "pearls_earned", "employee_id"], orders)
 write_csv("joint_order_item.csv", ["order_id", "menu_item_id"], joint_order_items)
 write_csv("joint_recipe_ingredients.csv", ["menu_item_id", "inventory_item_id", "quantity_used"], joint_recipe_ingredients)
 
-print("✅ Done! CSV files written.")
+print("✅ Done! CSV files generated for all tables.")
