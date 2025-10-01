@@ -1,5 +1,7 @@
 # ignore sql file
-*.sql
+seed_data.sql
 
 # ignore text file
 available_queries.txt
+
+DatabaseScripts/passwd.txt
