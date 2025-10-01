@@ -2,8 +2,8 @@ CREATE TABLE menu_items (
 id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 name VARCHAR(64) NOT NULL,
 price NUMERIC(10,2) NOT NULL,
-description VARCHAR(255)
-is_modification bool NOT NULL,
+description VARCHAR(255),
+is_modification bool NOT NULL
 );
 
 CREATE TABLE employees (
@@ -42,7 +42,7 @@ CREATE TABLE joint_order_items (
 order_id INT NOT NULL,
 menu_item_id INT NOT NULL,
 CONSTRAINT fk_order_id FOREIGN KEY (order_id) REFERENCES orders(id),
-CONSTRAINT fk_menu_item_id FOREIGN KEY (menu_item_id) REFERENCES menu_items(id),
+CONSTRAINT fk_menu_item_id FOREIGN KEY (menu_item_id) REFERENCES menu_items(id)
 );
 
 CREATE TABLE joint_recipe_ingredients (
