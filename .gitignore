@@ -3,3 +3,5 @@
 
 # ignore text file
 available_queries.txt
+
+DatabaseScripts/passwd.txt
