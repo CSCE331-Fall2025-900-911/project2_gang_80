@@ -79,9 +79,14 @@ def random_date(start, end):
 
 
 # data generation
-
+NUM_CUSTOMERS = 2000
+customer_records = []
+NUM_EMPLOYEES = 15
+NUM_MANAGERS = 3
+employees_records = []
 menu_item_records = []
 inventory_records = []
+NUM_ORDERS = 20000
 order_records = []
 joint_order_item_records = []
 joint_recipe_ingredient_records = []
@@ -89,6 +94,18 @@ joint_recipe_ingredient_records = []
 # IDs start from 1
 menu_item_id_map = {}
 inventory_item_id_map = {}
+
+# --- Insert Employees ---
+for i in range(1, NUM_EMPLOYEES + 1):
+    name = f"Employee{i}"
+    is_manager = (i<=NUM_MANAGERS)
+    employees_records.append(f"INSERT INTO employees (id, name, email, is_manager) VALUES ({i}, '{name}', {name}@teaone.com, {is_manager});")
+
+# --- Insert Customers ---
+for i in range(1, NUM_CUSTOMERS + 1):
+    name = f"Customer{i}"
+    phone_number = random.randint(1000000000, 9999999999)
+    employees_records.append(f"INSERT INTO employees (id, name, phone_number, pearls) VALUES ({i}, '{name}', {phone_number}, {is_manager});")
 
 # --- Insert Menu Items ---
 for i, (name, price, desc) in enumerate(MENU_ITEMS, start=1):
@@ -121,8 +138,8 @@ start_date = datetime.datetime.now() - datetime.timedelta(weeks=NUM_WEEKS)
 end_date = datetime.datetime.now()
 
 for order_id in range(1, NUM_ORDERS + 1):
-    customer_id = random.randint(1, 2000)
-    employee_id = random.randint(1, 50)
+    customer_id = random.randint(1, NUM_CUSTOMERS+1)
+    employee_id = random.randint(1, NUM_EMPLOYEES+1)
     complete_time = random_date(start_date, end_date).strftime('%Y-%m-%d %H:%M:%S')
     
     # pick 1-3 items per order
@@ -146,6 +163,10 @@ for order_id in range(1, NUM_ORDERS + 1):
 # Write to .sql file
 # ----------------------------
 with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+    f.write("-- EMPLOYEES\n")
+    f.write("\n".join(employees_records) + "\n\n")
+    f.write("-- CUSTOMERS\n")
+    f.write("\n".join(customer_records) + "\n\n")
     f.write("-- MENU ITEMS\n")
     f.write("\n".join(menu_item_records) + "\n\n")
     print('PASSED MENU ITEMS')
