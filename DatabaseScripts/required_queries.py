@@ -45,7 +45,7 @@ req_queries = [
     ("Top 10 customers by orders in a given time period",
      "SELECT customer_id, COUNT(*) AS order_count "
      "FROM orders "
-     "WHERE timestamp BETWEEN '2025-01-01 00:00:00'::timestamp AND '2025-01-31 23:59:59'::timestamp "
+     "WHERE timestamp BETWEEN '2024-10-01 00:00:00'::timestamp AND '2025-10-01 23:59:59'::timestamp "
      "GROUP BY customer_id "
      "ORDER BY order_count DESC "
      "LIMIT 10;"),
@@ -53,7 +53,7 @@ req_queries = [
     ("Top 10 customers by total spending in a given time period",
      "SELECT customer_id, SUM(total_price) AS total_spent "
      "FROM orders "
-     "WHERE timestamp BETWEEN '2025-01-01 00:00:00'::timestamp AND '2025-01-31 23:59:59'::timestamp "
+     "WHERE timestamp BETWEEN '2024-10-01 00:00:00'::timestamp AND '2025-10-01 23:59:59'::timestamp "
      "GROUP BY customer_id "
      "ORDER BY total_spent DESC "
      "LIMIT 10;"),
@@ -149,7 +149,7 @@ special_queries = [
     ("Special Query #1: Weekly Sales History",
      "SELECT EXTRACT(WEEK FROM timestamp) AS week_number, COUNT(*) AS orders_count "
      "FROM orders "
-     "WHERE timestamp BETWEEN '2025-01-01 00:00:00'::timestamp AND '2025-12-31 23:59:59'::timestamp "
+     "WHERE timestamp BETWEEN '2024-10-01 00:00:00'::timestamp AND '2025-10-01 23:59:59'::timestamp "
      "GROUP BY week_number "
      "ORDER BY week_number;"),
 
@@ -159,7 +159,7 @@ special_queries = [
     ("Special Query #2: Realistic Sales History",
      "SELECT EXTRACT(HOUR FROM timestamp) AS order_hour, COUNT(*) AS orders_count, SUM(total_price) AS total_sales "
      "FROM orders "
-     "WHERE timestamp BETWEEN '2025-01-01 00:00:00'::timestamp AND '2025-12-31 23:59:59'::timestamp "
+     "WHERE timestamp BETWEEN '2024-10-01 00:00:00'::timestamp AND '2025-10-01 23:59:59'::timestamp "
      "GROUP BY order_hour "
      "ORDER BY order_hour;"),
 
@@ -169,7 +169,7 @@ special_queries = [
     ("Special Query #3: Peak Sales Day",
      "SELECT DATE(timestamp) AS order_date, SUM(total_price) AS daily_total "
      "FROM orders "
-     "WHERE timestamp BETWEEN '2025-01-01 00:00:00'::timestamp AND '2025-12-31 23:59:59'::timestamp "
+     "WHERE timestamp BETWEEN '2024-10-01 00:00:00'::timestamp AND '2025-10-01 23:59:59'::timestamp "
      "GROUP BY order_date "
      "ORDER BY daily_total DESC "
      "LIMIT 10;"),
