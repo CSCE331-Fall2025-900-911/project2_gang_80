@@ -17,26 +17,26 @@ NUM_MANAGERS = 3
 # Static data
 # ----------------------------
 MENU_ITEMS = [
-    ("Classic Pearl Milk Tea", 3.5, "yummy Classic Pearl Milk Tea!"),
-    ("Honey Pearl Milk Tea", 4.75, "yummy Honey Pearl Milk Tea!"),
-    ("Coffee Creama", 4.5, "yummy Coffee Creama!"),
-    ("Thai Pearl Milk Tea", 4.25, "yummy Thai Pearl Milk Tea!"),
-    ("Mango Green Milk Tea", 4.0, "yummy Mango Green Milk Tea!"),
-    ("Taro Pearl Milk Tea", 4.0, "yummy Taro Pearl Milk Tea!"),
-    ("Hokkaido Pearl Milk Tea", 6.5, "yummy Hokkaido Pearl Milk Tea!"),
-    ("Cocounut Pearl Milk Tea", 3.75, "yummy Cocounut Pearl Milk Tea!"),
-    ("Mango Green Tea", 3.5, "yummy Mango Green Tea!"),
-    ("Berry Lychee Burst", 6.0, "yummy Berry Lychee Burst!"),
-    ("Honey Lemonade", 3.5, "yummy Honey Lemonade!"),
-    ("Wintermelon Lemonade", 3.75, "yummy Wintermelon Lemonade!"),
-    ("Halo Halo", 5.5, "yummy Halo Halo!"),
-    ("Matcha Pearl Milk Tea", 4.5, "yummy Matcha Pearl Milk Tea!"),
-    ("Strawberry Matcha Fresh Milk", 4.25, "yummy Strawberry Matcha Fresh Milk!"),
-    ("Mango Matcha Fresh Milk", 4.0, "yummy Mango Matcha Fresh Milk!"),
-    ("Oreo w/ Pearl", 4.75, "yummy Oreo w/ Pearl!"),
-    ("Taro w/ Pudding", 4.5, "yummy Taro w/ Pudding!"),
-    ("Lava Flow", 6.0, "yummy Lava Flow!"),
-    ("Peach Tea w/ Lychee Jelly", 3.5, "yummy Peach Tea w/ Lychee Jelly!"),
+    ("Classic Pearl Milk Tea", 15.5, "yummy Classic Pearl Milk Tea!"),
+    ("Honey Pearl Milk Tea", 20.75, "yummy Honey Pearl Milk Tea!"),
+    ("Coffee Creama", 20.5, "yummy Coffee Creama!"),
+    ("Thai Pearl Milk Tea", 20.25, "yummy Thai Pearl Milk Tea!"),
+    ("Mango Green Milk Tea", 20.0, "yummy Mango Green Milk Tea!"),
+    ("Taro Pearl Milk Tea", 20.0, "yummy Taro Pearl Milk Tea!"),
+    ("Hokkaido Pearl Milk Tea", 30.5, "yummy Hokkaido Pearl Milk Tea!"),
+    ("Cocounut Pearl Milk Tea", 15.75, "yummy Cocounut Pearl Milk Tea!"),
+    ("Mango Green Tea", 15.5, "yummy Mango Green Tea!"),
+    ("Berry Lychee Burst", 30.0, "yummy Berry Lychee Burst!"),
+    ("Honey Lemonade", 24.5, "yummy Honey Lemonade!"),
+    ("Wintermelon Lemonade", 24.75, "yummy Wintermelon Lemonade!"),
+    ("Halo Halo", 25.5, "yummy Halo Halo!"),
+    ("Matcha Pearl Milk Tea", 20.5, "yummy Matcha Pearl Milk Tea!"),
+    ("Strawberry Matcha Fresh Milk", 20.25, "yummy Strawberry Matcha Fresh Milk!"),
+    ("Mango Matcha Fresh Milk", 20.0, "yummy Mango Matcha Fresh Milk!"),
+    ("Oreo w/ Pearl", 25.75, "yummy Oreo w/ Pearl!"),
+    ("Taro w/ Pudding", 31.5, "yummy Taro w/ Pudding!"),
+    ("Lava Flow", 30.0, "yummy Lava Flow!"),
+    ("Peach Tea w/ Lychee Jelly", 16.5, "yummy Peach Tea w/ Lychee Jelly!"),
 ]
 
 ADDON_ITEMS = [
@@ -103,11 +103,11 @@ for i in range(1, NUM_CUSTOMERS + 1):
 # Menu Items
 id_counter = 1
 for (name, price, desc) in MENU_ITEMS:
-    menu_items.append([id_counter, name, price, False, desc])
+    menu_items.append([id_counter, name, price, desc, False])
     menu_item_id_map[name] = id_counter
     id_counter += 1
 for (name, price, desc) in ADDON_ITEMS:
-    menu_items.append([id_counter, name, price, True, desc])
+    menu_items.append([id_counter, name, price, desc, True])
     menu_item_id_map[name] = id_counter
     id_counter += 1
 
@@ -161,10 +161,10 @@ def write_csv(filename, header, rows):
 
 write_csv("employees.csv", ["id", "name", "email", "is_manager"], employees)
 write_csv("customers.csv", ["id", "name", "phone_number", "pearls"], customers)
-write_csv("menu_items.csv", ["id", "name", "price", "is_mod", "description"], menu_items)
+write_csv("menu_items.csv", ["id", "name", "price", "description", "is_mod"], menu_items)
 write_csv("inventory.csv", ["id", "name", "quantity", "restock_price"], inventory)
 write_csv("orders.csv", ["id", "customer_id", "complete_time", "order_total_price", "pearls_earned", "employee_id"], orders)
-write_csv("joint_order_item.csv", ["order_id", "menu_item_id"], joint_order_items)
+write_csv("joint_order_items.csv", ["order_id", "menu_item_id"], joint_order_items)
 write_csv("joint_recipe_ingredients.csv", ["menu_item_id", "inventory_item_id", "quantity_used"], joint_recipe_ingredients)
 
 print("✅ Done! CSV files generated for all tables.")
