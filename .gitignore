@@ -7,10 +7,4 @@ available_queries.txt
 DatabaseScripts/passwd.txt
 
 # ignore csv files
-DatabaseScripts/customers.csv
-DatabaseScripts/orders.csv
-DatabaseScripts/inventory.csv
-DatabaseScripts/employees.csv
-DatabaseScripts/menu_items.csv
-DatabaseScripts/join_order_item.csv
-DatabaseScripts/join_recipe_ingredients.csv
+*.csv
