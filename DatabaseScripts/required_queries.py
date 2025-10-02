@@ -2,8 +2,46 @@
 
 OUTPUT_FILE = "available_queries.txt"
 
+# verification queries
+# used to verify that database seeding contains the required amount of data
+ver_queries = [
+    # number of weeks 
+    ("Number of weeks in the dataset",
+     "SELECT COUNT(DISTINCT TO_CHAR(timestamp, 'IYYY-IW')) AS total_weeks "
+     "FROM orders;"
+    ),
+
+    # amount of total sales
+    ("Total sales amount",
+     "SELECT SUM(total_price) AS total_sales "
+     "FROM orders;"
+    ),
+
+    # number of peak days
+    ("Number of peak days",
+     "WITH daily_sales AS ( "
+     "SELECT DATE(timestamp) AS order_date, "
+     "SUM(total_price) AS total_sales FROM orders GROUP BY DATE(timestamp)), "
+     "stats AS ( "
+     "SELECT "
+     "AVG(total_sales) AS avg_sales, "
+     "STDDEV(total_sales) AS stddev_sales "
+     "FROM daily_sales "
+     ") "
+     "SELECT COUNT(*) AS num_peak_days "
+     "FROM daily_sales, stats "
+     "WHERE daily_sales.total_sales > stats.avg_sales + 2 * stats.stddev_sales;"
+    ),
+
+    # number of menu items
+    ("Number of menu items",
+     "SELECT COUNT(*) AS total_menu_items "
+     "FROM menu_items;"
+    )
+]
+
 # 15 required queries with descriptions
-queries = [
+req_queries = [
     ("Top 10 customers by orders in a given time period",
      "SELECT customer_id, COUNT(*) AS order_count "
      "FROM orders "
@@ -149,8 +187,12 @@ special_queries = [
 
 # Write the documentation text file
 with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+    f.write("-- VERIFICATION QUERIES (USED TO VERIFY THAT DATABASE SEEDING CONTAINS THE REQUIRED AMOUNT OF DATA)\n\n")
+    for description, sql in ver_queries:
+        f.write(f"\"{description}\"\n")
+        f.write(sql + "\n\n")
     f.write("-- 15 REQUIRED QUERIES\n\n")
-    for description, sql in queries:
+    for description, sql in req_queries:
         f.write(f"\"{description}\"\n")
         f.write(sql + "\n\n")
     f.write("\n-- 4 SPECIAL QUERIES\n\n")
@@ -158,4 +200,4 @@ with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(f"\"{description}\"\n")
         f.write(sql + "\n\n")
 
-print(f"Done! {len(queries)} queries and {len(special_queries)} special queries written and documented in '{OUTPUT_FILE}'")
+print(f"Done! {len(ver_queries)} verification queries, {len(req_queries)} required queries, and {len(special_queries)} special queries written and documented in '{OUTPUT_FILE}'")
